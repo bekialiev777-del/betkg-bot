@@ -14,6 +14,7 @@ def main_menu():
     kb.add("💳 Пополнить", "💵Вывести")
     kb.add("👤 Баланс", "📞 Поддержка")
     return kb
+    )
 
 @bot.message_handler(commands=["start"])
 def start(message):
