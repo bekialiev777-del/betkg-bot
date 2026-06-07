@@ -54,7 +54,7 @@ def balance(message):
 
 bot.infinity_polling()
 
-@bot.message_handler(func=lambda m: m.text == "💳 Пополнение")
+@bot.message_handler(func=lambda m: m.text == "💳 Пополнить")
 def deposit(message):
     bot.send_message(message.chat.id, "Пополнение суммасын жазыңыз. Мисалы: 500")
     bot.register_next_step_handler(message, deposit_amount)
