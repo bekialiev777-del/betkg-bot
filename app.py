@@ -11,8 +11,8 @@ amounts = {}
 
 def main_menu():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    kb.add("💳 Пополнение", "👤 Баланс")
-    kb.add("💸 Вывод", "📞 Поддержка")
+    kb.add("💳 Пополнить", "💵Вывести")
+    kb.add("👤 Баланс", "📞 Поддержка")
     return kb
 
 @bot.message_handler(commands=["start"])
