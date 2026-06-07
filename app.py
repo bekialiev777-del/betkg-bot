@@ -46,6 +46,13 @@ def start(message):
 def balance(message):
     bal = balances.get(message.from_user.id, 0)
     bot.send_message(message.chat.id, f"Сиздин баланс: {bal} сом")
+    bot.send_message(
+        message.chat.id,
+        "Башкы меню",
+        reply_markup=main_menu()
+    )
+
+bot.infinity_polling()
 
 @bot.message_handler(func=lambda m: m.text == "💳 Пополнение")
 def deposit(message):
