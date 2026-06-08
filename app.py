@@ -61,6 +61,10 @@ def welcome_text(first_name):
 
 @bot.message_handler(commands=["start"])
 def start(message):
+    try:
+    bot.delete_message(message.chat.id, message.message_id)
+except:
+    pass
     user_state.pop(message.from_user.id, None)
     user_data.pop(message.from_user.id, None)
 
@@ -73,6 +77,10 @@ def start(message):
 
 @bot.message_handler(func=lambda m: m.text == "⬅️ Назад")
 def back(message):
+    try:
+    bot.delete_message(message.chat.id, message.message_id)
+except:
+    pass
     user_state.pop(message.from_user.id, None)
     user_data.pop(message.from_user.id, None)
 
@@ -85,6 +93,10 @@ def back(message):
 
 @bot.message_handler(func=lambda m: m.text == "Оператор")
 def operator(message):
+    try:
+    bot.delete_message(message.chat.id, message.message_id)
+except:
+    pass
     send_clean(
         message.chat.id,
         "Оператор: @betkg",
@@ -94,6 +106,10 @@ def operator(message):
 
 @bot.message_handler(func=lambda m: m.text == "Пополнить")
 def deposit_start(message):
+    try:
+    bot.delete_message(message.chat.id, message.message_id)
+except:
+    pass
     user_state[message.from_user.id] = "deposit_id"
     user_data[message.from_user.id] = {"type": "Пополнение"}
 
@@ -106,6 +122,10 @@ def deposit_start(message):
 
 @bot.message_handler(func=lambda m: m.text == "Вывести")
 def withdraw_start(message):
+    try:
+    bot.delete_message(message.chat.id, message.message_id)
+except:
+    pass
     user_state[message.from_user.id] = "withdraw_id"
     user_data[message.from_user.id] = {"type": "Вывод"}
 
@@ -118,6 +138,10 @@ def withdraw_start(message):
 
 @bot.message_handler(func=lambda m: True)
 def handle_steps(message):
+    try:
+    bot.delete_message(message.chat.id, message.message_id)
+except:
+    pass
     user_id = message.from_user.id
     state = user_state.get(user_id)
 
