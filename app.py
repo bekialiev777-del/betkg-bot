@@ -33,6 +33,13 @@ def back_menu():
     return kb
 
 
+def delete_user_message(message):
+    try:
+        bot.delete_message(message.chat.id, message.message_id)
+    except Exception:
+        pass
+
+
 def send_clean(chat_id, text, reply_markup=None):
     if chat_id in last_bot_message:
         try:
@@ -61,6 +68,8 @@ def welcome_text(first_name):
 
 @bot.message_handler(commands=["start"])
 def start(message):
+    delete_user_message(message)
+
     user_state.pop(message.from_user.id, None)
     user_data.pop(message.from_user.id, None)
 
@@ -73,10 +82,8 @@ def start(message):
 
 @bot.message_handler(func=lambda m: m.text == "⬅️ Назад")
 def back(message):
-    try:
-    bot.delete_message(message.chat.id, message.message_id)
-except:
-    pass
+    delete_user_message(message)
+
     user_state.pop(message.from_user.id, None)
     user_data.pop(message.from_user.id, None)
 
@@ -89,6 +96,8 @@ except:
 
 @bot.message_handler(func=lambda m: m.text == "Оператор")
 def operator(message):
+    delete_user_message(message)
+
     send_clean(
         message.chat.id,
         "Оператор: @betkg",
@@ -98,6 +107,8 @@ def operator(message):
 
 @bot.message_handler(func=lambda m: m.text == "Пополнить")
 def deposit_start(message):
+    delete_user_message(message)
+
     user_state[message.from_user.id] = "deposit_id"
     user_data[message.from_user.id] = {"type": "Пополнение"}
 
@@ -110,6 +121,8 @@ def deposit_start(message):
 
 @bot.message_handler(func=lambda m: m.text == "Вывести")
 def withdraw_start(message):
+    delete_user_message(message)
+
     user_state[message.from_user.id] = "withdraw_id"
     user_data[message.from_user.id] = {"type": "Вывод"}
 
@@ -124,6 +137,8 @@ def withdraw_start(message):
 def handle_steps(message):
     user_id = message.from_user.id
     state = user_state.get(user_id)
+
+    delete_user_message(message)
 
     if not state:
         send_clean(
@@ -199,4 +214,4 @@ def handle_steps(message):
         user_data.pop(user_id, None)
 
 
-bot.infinity_polling(skip_pending=True)
+bot.infinity_polling(skip_pending=True)                        
