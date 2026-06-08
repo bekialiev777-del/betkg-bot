@@ -42,7 +42,16 @@ def start(message):
 def back(message):
     user_state.pop(message.from_user.id, None)
     user_data.pop(message.from_user.id, None)
-    bot.send_message(message.chat.id, "Главное меню:", reply_markup=main_menu())
+    bot.send_message(message.chat.id, "Здравствуйте, 
+
+1xBet KG — удобный сервис для пополнения и вывода средств без комиссии в Кыргызстане 🇰🇬
+
+🔒 Безопасные и защищённые транзакции
+⚡ Быстрая обработка заявок
+
+💬 Наш чат: @betkg
+
+Служба поддержки: @betkg", reply_markup=main_menu())
 
 
 @bot.message_handler(func=lambda m: m.text == "Оператор")
