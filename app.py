@@ -14,15 +14,15 @@ last_bot_message = {}
 
 def main_menu():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    kb.add("Пополнить", "Вывести")
-    kb.add("Оператор")
+    kb.add("💸 Пополнить", "💳 Вывести")
+    kb.add("👨‍💻 Оператор")
     return kb
 
 
 def methods_menu():
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    kb.add("МБанк", "О!Деньги")
-    kb.add("Оптима", "Бакай Банк")
+    kb.add("🏦 МБанк", "📱 О!Деньги")
+    kb.add("💎 Оптима", "🏛 Бакай Банк")
     kb.add("⬅️ Назад")
     return kb
 
@@ -36,7 +36,7 @@ def back_menu():
 def delete_user_message(message):
     try:
         bot.delete_message(message.chat.id, message.message_id)
-    except Exception:
+    except:
         pass
 
 
@@ -44,7 +44,7 @@ def send_clean(chat_id, text, reply_markup=None):
     if chat_id in last_bot_message:
         try:
             bot.delete_message(chat_id, last_bot_message[chat_id])
-        except Exception:
+        except:
             pass
 
     msg = bot.send_message(chat_id, text, reply_markup=reply_markup)
@@ -53,16 +53,19 @@ def send_clean(chat_id, text, reply_markup=None):
 
 
 def welcome_text(first_name):
-    return f"""Здравствуйте, {first_name} ⚡
+    return f"""👋 Здравствуйте, {first_name}
 
-1xBet KG — удобный сервис для пополнения и вывода средств без комиссии в Кыргызстане 🇰🇬
+💎 1xBet KG Premium Service 🇰🇬
 
-🔒 Безопасные и защищённые транзакции
-⚡ Быстрая обработка заявок
+⚡ Быстрое пополнение и вывод средств
+💸 Без комиссии 0%
+🔐 Безопасные и защищённые переводы
+🚀 Обработка заявок за 1–5 секунд
 
-💬 Наш чат: @betkg
+💬 Чат: @betkg
+🛟 Поддержка: @betkg
 
-Служба поддержки: @betkg
+✨ Выберите действие ниже:
 """
 
 
@@ -94,18 +97,18 @@ def back(message):
     )
 
 
-@bot.message_handler(func=lambda m: m.text == "Оператор")
+@bot.message_handler(func=lambda m: m.text == "👨‍💻 Оператор")
 def operator(message):
     delete_user_message(message)
 
     send_clean(
         message.chat.id,
-        "Оператор: @betkg",
+        "👨‍💻 Оператор: @betkg",
         reply_markup=main_menu()
     )
 
 
-@bot.message_handler(func=lambda m: m.text == "Пополнить")
+@bot.message_handler(func=lambda m: m.text == "💸 Пополнить")
 def deposit_start(message):
     delete_user_message(message)
 
@@ -114,12 +117,12 @@ def deposit_start(message):
 
     send_clean(
         message.chat.id,
-        "Напишите ваш ID счёт:",
+        "🆔 Напишите ваш ID счёт:",
         reply_markup=back_menu()
     )
 
 
-@bot.message_handler(func=lambda m: m.text == "Вывести")
+@bot.message_handler(func=lambda m: m.text == "💳 Вывести")
 def withdraw_start(message):
     delete_user_message(message)
 
@@ -128,7 +131,7 @@ def withdraw_start(message):
 
     send_clean(
         message.chat.id,
-        "Напишите ваш ID счёт:",
+        "🆔 Напишите ваш ID счёт:",
         reply_markup=back_menu()
     )
 
@@ -143,7 +146,7 @@ def handle_steps(message):
     if not state:
         send_clean(
             message.chat.id,
-            "Выберите кнопку из меню.",
+            "⚠️ Выберите кнопку из меню.",
             reply_markup=main_menu()
         )
         return
@@ -154,7 +157,7 @@ def handle_steps(message):
 
         send_clean(
             message.chat.id,
-            "Введите сумму:",
+            "💰 Введите сумму:",
             reply_markup=back_menu()
         )
         return
@@ -163,7 +166,7 @@ def handle_steps(message):
         if not message.text.isdigit():
             send_clean(
                 message.chat.id,
-                "Сумму напишите цифрами.",
+                "⚠️ Сумму напишите цифрами.",
                 reply_markup=back_menu()
             )
             return
@@ -173,18 +176,18 @@ def handle_steps(message):
 
         send_clean(
             message.chat.id,
-            "Выберите метод:",
+            "🏦 Выберите метод:",
             reply_markup=methods_menu()
         )
         return
 
     if state == "method":
-        methods = ["МБанк", "О!Деньги", "Оптима", "Бакай Банк"]
+        methods = ["🏦 МБанк", "📱 О!Деньги", "💎 Оптима", "🏛 Бакай Банк"]
 
         if message.text not in methods:
             send_clean(
                 message.chat.id,
-                "Выберите метод кнопкой.",
+                "⚠️ Выберите метод кнопкой.",
                 reply_markup=methods_menu()
             )
             return
@@ -194,19 +197,19 @@ def handle_steps(message):
 
         admin_text = (
             f"📩 Новая заявка\n\n"
-            f"Тип: {data['type']}\n"
-            f"ID счёт: {data['account_id']}\n"
-            f"Сумма: {data['amount']}\n"
-            f"Метод: {message.text}\n\n"
-            f"Telegram ID: {user_id}\n"
-            f"Username: @{username}"
+            f"📌 Тип: {data['type']}\n"
+            f"🆔 ID счёт: {data['account_id']}\n"
+            f"💰 Сумма: {data['amount']}\n"
+            f"🏦 Метод: {message.text}\n\n"
+            f"👤 Telegram ID: {user_id}\n"
+            f"📛 Username: @{username}"
         )
 
         bot.send_message(ADMIN_ID, admin_text)
 
         send_clean(
             message.chat.id,
-            "Заявка отправлена. Ожидайте.",
+            "✅ Заявка отправлена.\n⏳ Ожидайте подтверждения оператора.",
             reply_markup=main_menu()
         )
 
@@ -214,4 +217,4 @@ def handle_steps(message):
         user_data.pop(user_id, None)
 
 
-bot.infinity_polling(skip_pending=True)                        
+bot.infinity_polling(skip_pending=True)             
