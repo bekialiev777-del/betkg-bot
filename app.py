@@ -9,7 +9,6 @@ bot = telebot.TeleBot(BOT_TOKEN)
 
 user_data = {}
 user_state = {}
-last_bot_message = {}
 
 
 def main_menu():
@@ -40,16 +39,8 @@ def delete_user_message(message):
         pass
 
 
-def send_clean(chat_id, text, reply_markup=None):
-    if chat_id in last_bot_message:
-        try:
-            bot.delete_message(chat_id, last_bot_message[chat_id])
-        except:
-            pass
-
-    msg = bot.send_message(chat_id, text, reply_markup=reply_markup)
-    last_bot_message[chat_id] = msg.message_id
-    return msg
+def send_msg(chat_id, text, reply_markup=None):
+    return bot.send_message(chat_id, text, reply_markup=reply_markup)
 
 
 def welcome_text(first_name):
@@ -60,7 +51,7 @@ def welcome_text(first_name):
 ⚡ Быстрое пополнение и вывод средств
 💸 Без комиссии 0%
 🔐 Безопасные и защищённые переводы
-🚀 Обработка заявок за 1–5 секунд
+🚀 Быстрая обработка заявок
 
 💬 Чат: @betkg
 🛟 Поддержка: @betkg
@@ -76,11 +67,7 @@ def start(message):
     user_state.pop(message.from_user.id, None)
     user_data.pop(message.from_user.id, None)
 
-    send_clean(
-        message.chat.id,
-        welcome_text(message.from_user.first_name),
-        reply_markup=main_menu()
-    )
+    send_msg(message.chat.id, welcome_text(message.from_user.first_name), main_menu())
 
 
 @bot.message_handler(func=lambda m: m.text == "⬅️ Назад")
@@ -90,22 +77,14 @@ def back(message):
     user_state.pop(message.from_user.id, None)
     user_data.pop(message.from_user.id, None)
 
-    send_clean(
-        message.chat.id,
-        welcome_text(message.from_user.first_name),
-        reply_markup=main_menu()
-    )
+    send_msg(message.chat.id, "⬅️ Вы вернулись в главное меню.", main_menu())
 
 
 @bot.message_handler(func=lambda m: m.text == "👨‍💻 Оператор")
 def operator(message):
     delete_user_message(message)
 
-    send_clean(
-        message.chat.id,
-        "👨‍💻 Оператор: @betkg",
-        reply_markup=main_menu()
-    )
+    send_msg(message.chat.id, "👨‍💻 Оператор: @betkg", main_menu())
 
 
 @bot.message_handler(func=lambda m: m.text == "💸 Пополнить")
@@ -115,11 +94,7 @@ def deposit_start(message):
     user_state[message.from_user.id] = "deposit_id"
     user_data[message.from_user.id] = {"type": "Пополнение"}
 
-    send_clean(
-        message.chat.id,
-        "🆔 Напишите ваш ID счёт:",
-        reply_markup=back_menu()
-    )
+    send_msg(message.chat.id, "🆔 Напишите ваш ID счёт:", back_menu())
 
 
 @bot.message_handler(func=lambda m: m.text == "💳 Вывести")
@@ -129,11 +104,7 @@ def withdraw_start(message):
     user_state[message.from_user.id] = "withdraw_id"
     user_data[message.from_user.id] = {"type": "Вывод"}
 
-    send_clean(
-        message.chat.id,
-        "🆔 Напишите ваш ID счёт:",
-        reply_markup=back_menu()
-    )
+    send_msg(message.chat.id, "🆔 Напишите ваш ID счёт:", back_menu())
 
 
 @bot.message_handler(func=lambda m: True)
@@ -141,56 +112,43 @@ def handle_steps(message):
     user_id = message.from_user.id
     state = user_state.get(user_id)
 
-    delete_user_message(message)
-
     if not state:
-        send_clean(
-            message.chat.id,
-            "⚠️ Выберите кнопку из меню.",
-            reply_markup=main_menu()
-        )
+        delete_user_message(message)
+        send_msg(message.chat.id, "⚠️ Выберите кнопку из меню.", main_menu())
         return
 
     if state in ["deposit_id", "withdraw_id"]:
         user_data[user_id]["account_id"] = message.text
         user_state[user_id] = "amount"
 
-        send_clean(
-            message.chat.id,
-            "💰 Введите сумму:",
-            reply_markup=back_menu()
-        )
+        delete_user_message(message)
+
+        send_msg(message.chat.id, "💰 Введите сумму:", back_menu())
         return
 
     if state == "amount":
         if not message.text.isdigit():
-            send_clean(
-                message.chat.id,
-                "⚠️ Сумму напишите цифрами.",
-                reply_markup=back_menu()
-            )
+            delete_user_message(message)
+            send_msg(message.chat.id, "⚠️ Сумму напишите цифрами.", back_menu())
             return
 
         user_data[user_id]["amount"] = message.text
         user_state[user_id] = "method"
 
-        send_clean(
-            message.chat.id,
-            "🏦 Выберите метод:",
-            reply_markup=methods_menu()
-        )
+        delete_user_message(message)
+
+        send_msg(message.chat.id, "🏦 Выберите метод:", methods_menu())
         return
 
     if state == "method":
         methods = ["🏦 МБанк", "📱 О!Деньги", "💎 Оптима", "🏛 Бакай Банк"]
 
         if message.text not in methods:
-            send_clean(
-                message.chat.id,
-                "⚠️ Выберите метод кнопкой.",
-                reply_markup=methods_menu()
-            )
+            delete_user_message(message)
+            send_msg(message.chat.id, "⚠️ Выберите метод кнопкой.", methods_menu())
             return
+
+        delete_user_message(message)
 
         data = user_data[user_id]
         username = message.from_user.username or "нет username"
@@ -207,14 +165,14 @@ def handle_steps(message):
 
         bot.send_message(ADMIN_ID, admin_text)
 
-        send_clean(
+        send_msg(
             message.chat.id,
             "✅ Заявка отправлена.\n⏳ Ожидайте подтверждения оператора.",
-            reply_markup=main_menu()
+            main_menu()
         )
 
         user_state.pop(user_id, None)
         user_data.pop(user_id, None)
 
 
-bot.infinity_polling(skip_pending=True)             
+bot.infinity_polling(skip_pending=True)
